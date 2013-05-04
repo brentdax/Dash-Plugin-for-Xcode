@@ -122,6 +122,14 @@
     return nil;
 }
 
+- (NSString*)om_iOSKeyword {
+    return [self om_keywordForPlatformNamed:@[ @"iphone", @"ios" ]];
+}
+
+- (NSString*)om_OSXKeyword {
+    return [self om_keywordForPlatformNamed:@[ @"macosx", @"osx" ]];
+}
+
 - (NSString *)om_appendActiveSchemeKeyword:(NSString *)searchString
 {
     if(![[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled])
@@ -142,10 +150,10 @@
                 NSString *foundKeyword;
                     
                 if(iOS) {
-                    foundKeyword = [self om_keywordForPlatformNamed:@[ @"iphone", @"ios" ]];
+                    foundKeyword = [self om_iOSKeyword];
                 }
                 else if(mac) {
-                    foundKeyword = [self om_keywordForPlatformNamed:@[ @"macosx", @"osx" ]];
+                    foundKeyword = [self om_OSXKeyword];
                 }
                 
                 if(foundKeyword) {
