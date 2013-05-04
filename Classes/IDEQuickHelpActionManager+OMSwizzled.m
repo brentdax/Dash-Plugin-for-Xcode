@@ -51,6 +51,9 @@
 
 - (void)om_openNavigableItemInDocumentationOrganizer:(IDENavigableItem *)tokenItem {
     BOOL dashDisabled = OMQuickHelpPlugin.sharedQuickHelpPlugin.openInDashDisabled;
+    if([NSApp currentEvent].modifierFlags & NSShiftKeyMask) {
+        dashDisabled = !dashDisabled;
+    }
     
     if(!dashDisabled) {
         @try {
