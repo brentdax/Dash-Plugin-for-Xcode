@@ -8,53 +8,55 @@
 
 #import "OMQuickHelpPlugin.h"
 #import "JRSwizzle.h"
+#import "ClassDumpedXcodeClasses.h"
 
 #define kOMSuppressDashNotInstalledWarning	@"OMSuppressDashNotInstalledWarning"
 #define kOMOpenInDashDisabled				@"OMOpenInDashDisabled"
 #define kOMDashPlatformDetectionDisabled    @"OMDashPlatformDetectionDisabled"
 
-@interface NSObject (OMSwizzledIDESourceCodeEditor)
+@interface NSObject (OMSwizzledIDEQuickHelpActionManager)
 
-- (void)om_textView:(id)arg1 didClickOnTemporaryLinkAtCharacterIndex:(unsigned long long)arg2 event:(id)arg3 isAltEvent:(BOOL)arg4;
-- (void)om_showQuickHelp:(id)sender;
-- (void)om_dashNotInstalledFallback;
-- (BOOL)om_showQuickHelpForSearchString:(NSString *)searchString;
+- (void)om_openNavigableItemInDocumentationOrganizer:(IDENavigableItem*)tokenItem;
+- (void)om_dashNotInstalledWarning;
+- (BOOL)om_showDashForSearchString:(NSString *)searchString;
 
 @end
 
-@implementation NSObject (OMSwizzledIDESourceCodeEditor)
+@implementation NSObject (OMSwizzledIDEQuickHelpActionManager)
 
-- (void)om_showQuickHelp:(id)sender
-{
-	@try {
-		BOOL dashDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
-		if (dashDisabled) {
-			//No, this is not an infinite loop because the method is swizzled:
-			[self om_showQuickHelp:sender];
-			return;
-		}
-		NSString *symbolString = [self valueForKeyPath:@"selectedExpression.symbolString"];
-        if(symbolString.length)
-        {
-            BOOL dashOpened = [self om_showQuickHelpForSearchString:symbolString];
-            if (!dashOpened) {
-                [self om_dashNotInstalledFallback];
-            }
-        }
-        else
-        {
-            NSBeep();
-        }
-	}
-	@catch (NSException *exception) {
-		
-	}
+- (NSString*)om_searchStringForToken:(DSAToken*)token {
+    if([@[@"instm", @"clm", @"instp"] containsObject:token.type]) {
+        return [NSString stringWithFormat:@"%@ %@", token.scope, token.name];
+    }
+    else if([@[@"binding"] containsObject:token.type]) {
+        // Docs for bindings are not readily accessible in Dash
+        return nil;
+        //return [NSString stringWithFormat:@"%@Bindings %@", token.scope, token.name];
+    }
+    else {
+        return token.name;
+    }
 }
 
-- (void)om_dashNotInstalledFallback
-{
-	//Fall back to default behavior:
-	[self om_showQuickHelp:self];
+- (void)om_openNavigableItemInDocumentationOrganizer:(IDENavigableItem *)tokenItem {
+    BOOL dashDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
+    if(!dashDisabled) {
+        DSAToken * token = tokenItem.representedObject;
+        NSString * searchString = [self om_searchStringForToken:token];
+        
+        if([self om_showDashForSearchString:searchString]) {
+            return;
+        }
+        
+        // If we got here, we couldn't show Dash.
+        [self om_dashNotInstalledWarning];
+    }
+    
+    // Fall back to documentation browser
+    [self om_openNavigableItemInDocumentationOrganizer:tokenItem];
+}
+
+- (void)om_dashNotInstalledWarning {
 	//Show a warning that Dash is not installed:
 	BOOL showNotInstalledWarning = ![[NSUserDefaults standardUserDefaults] boolForKey:kOMSuppressDashNotInstalledWarning];
 	if (showNotInstalledWarning) {
@@ -67,41 +69,12 @@
 	}
 }
 
-- (void)om_textView:(NSTextView *)textView didClickOnTemporaryLinkAtCharacterIndex:(unsigned long long)charIndex event:(NSEvent *)event isAltEvent:(BOOL)isAltEvent
+- (BOOL)om_showDashForSearchString:(NSString *)searchString
 {
-	BOOL dashDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
-	if (isAltEvent && !dashDisabled) {
-		@try {
-			NSArray *linkRanges = [textView valueForKey:@"_temporaryLinkRanges"];
-			NSMutableString *searchString = [NSMutableString string];
-			for (NSValue *rangeValue in linkRanges) {
-				NSRange range = [rangeValue rangeValue];
-				NSString *stringFromRange = [textView.textStorage.string substringWithRange:range];
-				[searchString appendString:stringFromRange];
-			}
-            if(searchString.length)
-            {
-                BOOL dashOpened = [self om_showQuickHelpForSearchString:searchString];
-                if (!dashOpened) {
-                    [self om_dashNotInstalledFallback];
-                }
-            }
-            else
-            {
-                NSBeep();
-            }
-		}
-		@catch (NSException *exception) {
-			
-		}
-	} else {
-		//Preserve the default behavior for cmd-clicks:
-		[self om_textView:textView didClickOnTemporaryLinkAtCharacterIndex:charIndex event:event isAltEvent:isAltEvent];
-	}
-}
-
-- (BOOL)om_showQuickHelpForSearchString:(NSString *)searchString
-{
+    if(!searchString) {
+        return NO;
+    }
+    
     searchString = [self om_appendActiveSchemeKeyword:searchString];
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
 	[pboard setString:searchString forType:NSStringPboardType];
@@ -182,17 +155,15 @@
 
 @end
 
-
-
 @implementation OMQuickHelpPlugin
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		if (NSClassFromString(@"IDESourceCodeEditor") != NULL) {
-			[NSClassFromString(@"IDESourceCodeEditor") jr_swizzleMethod:@selector(showQuickHelp:) withMethod:@selector(om_showQuickHelp:) error:NULL];
-			[NSClassFromString(@"IDESourceCodeEditor") jr_swizzleMethod:@selector(textView:didClickOnTemporaryLinkAtCharacterIndex:event:isAltEvent:) withMethod:@selector(om_textView:didClickOnTemporaryLinkAtCharacterIndex:event:isAltEvent:) error:NULL];
+        Class IDEQuickHelpActionManager = NSClassFromString(@"IDEQuickHelpActionManager");
+		if (IDEQuickHelpActionManager != NULL) {
+			[IDEQuickHelpActionManager jr_swizzleMethod:@selector(openNavigableItemInDocumentationOrganizer:) withMethod:@selector(om_openNavigableItemInDocumentationOrganizer:) error:NULL];
 		}
 		[[self alloc] init];
 	});

@@ -19,6 +19,7 @@
 		7F2EB899145057EA00E97A87 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		7F7D85B31608C33200F20BF7 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		7F7D85B41608C33200F20BF7 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
+		84C118F31734E6250096E299 /* ClassDumpedXcodeClasses.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassDumpedXcodeClasses.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* OMQuickHelp.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OMQuickHelp.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA37E2DB0E6291C8001BDFEF /* OMQuickHelpPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMQuickHelpPlugin.m; sourceTree = "<group>"; };
@@ -80,6 +81,7 @@
 				DA37E2DB0E6291C8001BDFEF /* OMQuickHelpPlugin.m */,
 				7F7D85B31608C33200F20BF7 /* JRSwizzle.h */,
 				7F7D85B41608C33200F20BF7 /* JRSwizzle.m */,
+				84C118F31734E6250096E299 /* ClassDumpedXcodeClasses.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
