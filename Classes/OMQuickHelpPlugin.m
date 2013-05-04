@@ -109,6 +109,19 @@
     return docsets;
 }
 
+- (NSString*)om_keywordForPlatformNamed:(NSArray*)platformNames {
+    for(NSDictionary *docset in [self om_dashDocSets]) {
+        NSString *platform = [[docset objectForKey:@"platform"] lowercaseString];
+        
+        if([platformNames containsObject:platform]) {
+            NSString *keyword = [docset objectForKey:@"keyword"];
+            return keyword.length ? keyword : platform;
+        }        
+    }
+
+    return nil;
+}
+
 - (NSString *)om_appendActiveSchemeKeyword:(NSString *)searchString
 {
     if(![[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled])
@@ -125,34 +138,18 @@
                 destination = [destination lowercaseString];
                 BOOL iOS = [destination hasPrefix:@"iphone"] || [destination hasPrefix:@"ipad"] || [destination hasPrefix:@"ios"];
                 BOOL mac = [destination hasPrefix:@"mac"] || [destination hasPrefix:@"osx"];
-                if(iOS || mac)
-                {
-                    NSArray * docsets = [self om_dashDocSets];
+
+                NSString *foundKeyword;
                     
-                    NSString *foundKeyword = nil;
-                    for(NSDictionary *docset in docsets)
-                    {
-                        NSString *platform = [[docset objectForKey:@"platform"] lowercaseString];
-                        BOOL found = NO;
-                        if(iOS && ([platform hasPrefix:@"iphone"] || [platform hasPrefix:@"ios"]))
-                        {
-                            found = YES;
-                        }
-                        else if(mac && ([platform hasPrefix:@"macosx"] || [platform hasPrefix:@"osx"]))
-                        {
-                            found = YES;
-                        }
-                        if(found)
-                        {
-                            NSString *keyword = [docset objectForKey:@"keyword"];
-                            foundKeyword = (keyword && keyword.length) ? keyword : platform;
-                            break;
-                        }
-                    }
-                    if(foundKeyword)
-                    {
-                        searchString = [[[foundKeyword stringByReplacingOccurrencesOfString:@":" withString:@""] stringByAppendingString:@":"] stringByAppendingString:searchString];
-                    }
+                if(iOS) {
+                    foundKeyword = [self om_keywordForPlatformNamed:@[ @"iphone", @"ios" ]];
+                }
+                else if(mac) {
+                    foundKeyword = [self om_keywordForPlatformNamed:@[ @"macosx", @"osx" ]];
+                }
+                
+                if(foundKeyword) {
+                    searchString = [[[foundKeyword stringByReplacingOccurrencesOfString:@":" withString:@""] stringByAppendingString:@":"] stringByAppendingString:searchString];
                 }
             }
         }
