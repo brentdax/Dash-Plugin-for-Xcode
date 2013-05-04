@@ -10,10 +10,6 @@
 #import "JRSwizzle.h"
 #import "ClassDumpedXcodeClasses.h"
 
-#define kOMSuppressDashNotInstalledWarning	@"OMSuppressDashNotInstalledWarning"
-#define kOMOpenInDashDisabled				@"OMOpenInDashDisabled"
-#define kOMDashPlatformDetectionDisabled    @"OMDashPlatformDetectionDisabled"
-
 @interface NSObject (OMSwizzledIDEQuickHelpActionManager)
 
 - (void)om_openNavigableItemInDocumentationOrganizer:(IDENavigableItem*)tokenItem;
@@ -49,7 +45,7 @@
         keyword = [self om_iOSKeyword];
     }
     
-    if(keyword && ![[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled]) {
+    if(keyword && !OMQuickHelpPlugin.sharedQuickHelpPlugin.dashPlatformDetectionDisabled) {
         return [NSString stringWithFormat:@"%@:%@", [keyword stringByReplacingOccurrencesOfString:@":" withString:@""], nameString];
     }
     else {
@@ -58,7 +54,7 @@
 }
 
 - (void)om_openNavigableItemInDocumentationOrganizer:(IDENavigableItem *)tokenItem {
-    BOOL dashDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
+    BOOL dashDisabled = OMQuickHelpPlugin.sharedQuickHelpPlugin.openInDashDisabled;
     
     if(!dashDisabled) {
         @try {
@@ -85,13 +81,13 @@
 
 - (void)om_dashNotInstalledWarning {
 	//Show a warning that Dash is not installed:
-	BOOL showNotInstalledWarning = ![[NSUserDefaults standardUserDefaults] boolForKey:kOMSuppressDashNotInstalledWarning];
+	BOOL showNotInstalledWarning = !OMQuickHelpPlugin.sharedQuickHelpPlugin.suppressDashNotInstalledWarning;
 	if (showNotInstalledWarning) {
 		NSAlert *alert = [NSAlert alertWithMessageText:@"Dash not installed" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"It looks like the Dash app is not installed on your system. Please visit http://kapeli.com/dash/ to get it."];
 		[alert setShowsSuppressionButton:YES];
 		[alert runModal];
 		if ([[alert suppressionButton] state] == NSOnState) {
-			[[NSUserDefaults standardUserDefaults] setBool:YES forKey:kOMSuppressDashNotInstalledWarning];
+            OMQuickHelpPlugin.sharedQuickHelpPlugin.suppressDashNotInstalledWarning = YES;
 		}
 	}
 }
@@ -160,6 +156,8 @@
 
 @end
 
+static OMQuickHelpPlugin * sharedPlugin = nil;
+
 @implementation OMQuickHelpPlugin
 
 + (void)pluginDidLoad:(NSBundle *)plugin
@@ -170,8 +168,12 @@
 		if (IDEQuickHelpActionManager != NULL) {
 			[IDEQuickHelpActionManager jr_swizzleMethod:@selector(openNavigableItemInDocumentationOrganizer:) withMethod:@selector(om_openNavigableItemInDocumentationOrganizer:) error:NULL];
 		}
-		[[self alloc] init];
+		sharedPlugin = [[self alloc] init];
 	});
+}
+
++ (OMQuickHelpPlugin *)sharedQuickHelpPlugin {
+    return sharedPlugin;
 }
 
 - (id)init
@@ -198,14 +200,14 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
 	if ([menuItem action] == @selector(toggleOpenInDashEnabled:)) {
-		if ([[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled]) {
+		if (self.openInDashDisabled) {
 			[menuItem setState:NSOffState];
 		} else {
 			[menuItem setState:NSOnState];
 		}
 	}
     else if([menuItem action] == @selector(toggleDashPlatformDetection:)) {
-		if ([[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled]) {
+		if (self.dashPlatformDetectionDisabled) {
 			[menuItem setState:NSOffState];
 		} else {
 			[menuItem setState:NSOnState];
@@ -214,16 +216,40 @@
 	return YES;
 }
 
-- (void)toggleOpenInDashEnabled:(id)sender
-{
-	BOOL disabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
-	[[NSUserDefaults standardUserDefaults] setBool:!disabled forKey:kOMOpenInDashDisabled];
+- (void)toggleOpenInDashEnabled:(id)sender {
+    self.openInDashDisabled = !self.openInDashDisabled;
 }
 
-- (void)toggleDashPlatformDetection:(id)sender
-{
-    BOOL disabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled];
-	[[NSUserDefaults standardUserDefaults] setBool:!disabled forKey:kOMDashPlatformDetectionDisabled];
+- (void)toggleDashPlatformDetection:(id)sender {
+    self.dashPlatformDetectionDisabled = !self.dashPlatformDetectionDisabled;
+}
+
+#define kOMSuppressDashNotInstalledWarning	@"OMSuppressDashNotInstalledWarning"
+#define kOMOpenInDashDisabled				@"OMOpenInDashDisabled"
+#define kOMDashPlatformDetectionDisabled    @"OMDashPlatformDetectionDisabled"
+
+- (BOOL)openInDashDisabled {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
+}
+
+- (void)setOpenInDashDisabled:(BOOL)openInDashDisabled {
+    [[NSUserDefaults standardUserDefaults] setBool:openInDashDisabled forKey:kOMOpenInDashDisabled];
+}
+
+- (BOOL)dashPlatformDetectionDisabled {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled];
+}
+
+- (void)setDashPlatformDetectionDisabled:(BOOL)dashPlatformDetectionDisabled {
+    return [[NSUserDefaults standardUserDefaults] setBool:dashPlatformDetectionDisabled forKey:kOMDashPlatformDetectionDisabled];
+}
+
+- (BOOL)suppressDashNotInstalledWarning {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:kOMSuppressDashNotInstalledWarning];
+}
+
+- (void)setSuppressDashNotInstalledWarning:(BOOL)suppressDashNotInstalledWarning {
+    return [[NSUserDefaults standardUserDefaults] setBool:suppressDashNotInstalledWarning forKey:kOMSuppressDashNotInstalledWarning];
 }
 
 @end

@@ -13,6 +13,13 @@
 	
 }
 
++ (OMQuickHelpPlugin*)sharedQuickHelpPlugin;
+
 - (void)toggleOpenInDashEnabled:(id)sender;
+- (void)toggleDashPlatformDetection:(id)sender;
+
+@property (nonatomic,assign) BOOL openInDashDisabled;
+@property (nonatomic,assign) BOOL dashPlatformDetectionDisabled;
+@property (nonatomic,assign) BOOL suppressDashNotInstalledWarning;
 
 @end
