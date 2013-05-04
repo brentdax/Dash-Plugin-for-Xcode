@@ -15,7 +15,9 @@
 
 + (OMQuickHelpPlugin*)sharedQuickHelpPlugin;
 
-- (void)toggleOpenInDashEnabled:(id)sender;
+- (void)enableOpenInDash:(id)sender;
+- (void)disableOpenInDash:(id)sender;
+
 - (void)toggleDashPlatformDetection:(id)sender;
 
 @property (nonatomic,assign) BOOL openInDashDisabled;

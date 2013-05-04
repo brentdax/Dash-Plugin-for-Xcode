@@ -35,12 +35,20 @@ static OMQuickHelpPlugin * sharedPlugin = nil;
 		if (editMenuItem) {
 			[[editMenuItem submenu] addItem:[NSMenuItem separatorItem]];
 			NSMenuItem *dashMenuItem = [[[NSMenuItem alloc] initWithTitle:@"Dash Integration" action:nil keyEquivalent:@""] autorelease];
+            
             NSMenu *dashMenu = [[[NSMenu alloc] init] autorelease];
             [dashMenuItem setSubmenu:dashMenu];
-			NSMenuItem *toggleDashItem = [dashMenu addItemWithTitle:@"Quick Help Links Open In Dash" action:@selector(toggleOpenInDashEnabled:) keyEquivalent:@""];
-            [toggleDashItem setTarget:self];
+            
+			NSMenuItem *enableDashItem = [dashMenu addItemWithTitle:@"Quick Help Links Open In Dash" action:@selector(enableOpenInDash:) keyEquivalent:@""];
+            [enableDashItem setTarget:self];
+			NSMenuItem *disableDashItem = [dashMenu addItemWithTitle:@"Quick Help Links Open In Organizer" action:@selector(disableOpenInDash:) keyEquivalent:@""];
+            [disableDashItem setTarget:self];
+            
+            [dashMenu addItem:[NSMenuItem separatorItem]];
+            
             NSMenuItem *togglePlatformDetection = [dashMenu addItemWithTitle:@"Add Docset Keyword" action:@selector(toggleDashPlatformDetection:) keyEquivalent:@""];
             [togglePlatformDetection setTarget:self];
+            
 			[[editMenuItem submenu] addItem:dashMenuItem];
 		}
 	}
@@ -49,8 +57,15 @@ static OMQuickHelpPlugin * sharedPlugin = nil;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-	if ([menuItem action] == @selector(toggleOpenInDashEnabled:)) {
+	if ([menuItem action] == @selector(enableOpenInDash:)) {
 		if (self.openInDashDisabled) {
+			[menuItem setState:NSOffState];
+		} else {
+			[menuItem setState:NSOnState];
+		}
+	}
+	else if ([menuItem action] == @selector(disableOpenInDash:)) {
+		if (!self.openInDashDisabled) {
 			[menuItem setState:NSOffState];
 		} else {
 			[menuItem setState:NSOnState];
@@ -62,12 +77,18 @@ static OMQuickHelpPlugin * sharedPlugin = nil;
 		} else {
 			[menuItem setState:NSOnState];
 		}
+        
+        return !self.openInDashDisabled;
 	}
 	return YES;
 }
 
-- (void)toggleOpenInDashEnabled:(id)sender {
-    self.openInDashDisabled = !self.openInDashDisabled;
+- (void)enableOpenInDash:(id)sender {
+    self.openInDashDisabled = NO;
+}
+
+- (void)disableOpenInDash:(id)sender {
+    self.openInDashDisabled = YES;
 }
 
 - (void)toggleDashPlatformDetection:(id)sender {
