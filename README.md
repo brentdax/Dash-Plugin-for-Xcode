@@ -2,7 +2,7 @@
 
 ## Overview
 
-This plugin allows you to use [Dash](http://kapeli.com/dash/) instead of Xcode's own documentation viewer when using **Option-Click** (or the equivalent keyboard shortcut) to view the documentation for the selected symbol.
+This plugin allows you to use [Dash](http://kapeli.com/dash/) instead of Xcode's own documentation viewer when clicking links in Xcode's Quick Look window.
 
 While you could also use Dash's "Look up in Dash" Services menu item, this is better in several ways:
 
@@ -11,7 +11,7 @@ While you could also use Dash's "Look up in Dash" Services menu item, this is be
 * You don't have to select the entire symbol that you want to look up.
 * It automatically detects your active scheme (iOS or Mac) and searches only the active scheme's docset
 
-If you want to use Xcode's built-in documentation popover again, you can temporarily disable the Dash integration using the "Enable Dash Quick Help" item in the "Edit" menu.
+If you want to use Xcode's built-in documentation browser again, you can temporarily disable the Dash integration using the "Enable Dash Quick Help" item in the "Edit" menu.
 
 If you like reading Apple's documentation, you might also like my [iOS app DocSets](https://github.com/omz/DocSets-for-iOS) for reading on your iPad or iPhone, even if you have no internet connection.
 
