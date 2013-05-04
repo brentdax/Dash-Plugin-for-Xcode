@@ -37,9 +37,9 @@ static OMQuickHelpPlugin * sharedPlugin = nil;
 			NSMenuItem *dashMenuItem = [[[NSMenuItem alloc] initWithTitle:@"Dash Integration" action:nil keyEquivalent:@""] autorelease];
             NSMenu *dashMenu = [[[NSMenu alloc] init] autorelease];
             [dashMenuItem setSubmenu:dashMenu];
-			NSMenuItem *toggleDashItem = [dashMenu addItemWithTitle:@"Enable Dash Quick Help" action:@selector(toggleOpenInDashEnabled:) keyEquivalent:@""];
+			NSMenuItem *toggleDashItem = [dashMenu addItemWithTitle:@"Quick Help Links Open In Dash" action:@selector(toggleOpenInDashEnabled:) keyEquivalent:@""];
             [toggleDashItem setTarget:self];
-            NSMenuItem *togglePlatformDetection = [dashMenu addItemWithTitle:@"Enable Dash Platform Detection" action:@selector(toggleDashPlatformDetection:) keyEquivalent:@""];
+            NSMenuItem *togglePlatformDetection = [dashMenu addItemWithTitle:@"Add Docset Keyword" action:@selector(toggleDashPlatformDetection:) keyEquivalent:@""];
             [togglePlatformDetection setTarget:self];
 			[[editMenuItem submenu] addItem:dashMenuItem];
 		}
