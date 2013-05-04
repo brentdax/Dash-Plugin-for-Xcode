@@ -9,8 +9,9 @@
 /* Begin PBXBuildFile section */
 		7F2EB89C145057F200E97A87 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2EB899145057EA00E97A87 /* AppKit.framework */; };
 		7F7D85B51608C33200F20BF7 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7D85B41608C33200F20BF7 /* JRSwizzle.m */; };
+		843520F717359E7500BBF551 /* OMQuickHelpPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = DA37E2DB0E6291C8001BDFEF /* OMQuickHelpPlugin.m */; };
+		843520F817359FFE00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.m in Sources */ = {isa = PBXBuildFile; fileRef = 843520F517359BAB00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.m */; };
 		DA1B5D020E64686800921439 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089C1672FE841209C02AAC07 /* Foundation.framework */; };
-		DA37E2DC0E6291C8001BDFEF /* OMQuickHelpPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = DA37E2DB0E6291C8001BDFEF /* OMQuickHelpPlugin.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,8 @@
 		7F7D85B31608C33200F20BF7 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		7F7D85B41608C33200F20BF7 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		843520F3173523C500BBF551 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		843520F417359BAB00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IDEQuickHelpActionManager+OMSwizzled.h"; sourceTree = "<group>"; };
+		843520F517359BAB00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IDEQuickHelpActionManager+OMSwizzled.m"; sourceTree = "<group>"; };
 		84C118F31734E6250096E299 /* ClassDumpedXcodeClasses.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassDumpedXcodeClasses.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* OMQuickHelp.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OMQuickHelp.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -81,6 +84,8 @@
 			children = (
 				7F2B355F15FA59D000DB3249 /* OMQuickHelpPlugin.h */,
 				DA37E2DB0E6291C8001BDFEF /* OMQuickHelpPlugin.m */,
+				843520F417359BAB00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.h */,
+				843520F517359BAB00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.m */,
 				7F7D85B31608C33200F20BF7 /* JRSwizzle.h */,
 				7F7D85B41608C33200F20BF7 /* JRSwizzle.m */,
 				84C118F31734E6250096E299 /* ClassDumpedXcodeClasses.h */,
@@ -140,8 +145,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA37E2DC0E6291C8001BDFEF /* OMQuickHelpPlugin.m in Sources */,
 				7F7D85B51608C33200F20BF7 /* JRSwizzle.m in Sources */,
+				843520F717359E7500BBF551 /* OMQuickHelpPlugin.m in Sources */,
+				843520F817359FFE00BBF551 /* IDEQuickHelpActionManager+OMSwizzled.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
