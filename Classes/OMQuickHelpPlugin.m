@@ -39,9 +39,9 @@ static OMQuickHelpPlugin * sharedPlugin = nil;
             NSMenu *dashMenu = [[[NSMenu alloc] init] autorelease];
             [dashMenuItem setSubmenu:dashMenu];
             
-			NSMenuItem *enableDashItem = [dashMenu addItemWithTitle:@"Quick Help Links Open In Dash" action:@selector(enableOpenInDash:) keyEquivalent:@""];
+			NSMenuItem *enableDashItem = [dashMenu addItemWithTitle:@"Use Dash for Quick Help Links" action:@selector(enableOpenInDash:) keyEquivalent:@""];
             [enableDashItem setTarget:self];
-			NSMenuItem *disableDashItem = [dashMenu addItemWithTitle:@"Quick Help Links Open In Organizer" action:@selector(disableOpenInDash:) keyEquivalent:@""];
+			NSMenuItem *disableDashItem = [dashMenu addItemWithTitle:@"Use Xcode Organizer for Quick Help Links" action:@selector(disableOpenInDash:) keyEquivalent:@""];
             [disableDashItem setTarget:self];
             
             [dashMenu addItem:[NSMenuItem separatorItem]];

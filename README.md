@@ -6,7 +6,7 @@ This Xcode plugin helps [Dash](http://kapeli.com/dash/) users avoid the Xcode do
 
 Since Xcode understands Objective-C selector syntax and knows which platform's documentation you're interested in, this plugin does too. It does its best to send you to the right place.
 
-If you want to use Xcode's built-in documentation browser again, you can temporarily disable the Dash integration using the "Quick Help Links Open In Organizer" item in the "Edit" menu.
+If you want to use Xcode's built-in documentation browser again, you can temporarily disable the Dash integration using the "Use Xcode Organizer for Quick Help Links" item in the "Edit" menu.
 
 This plugin has been heavily modified by [@architechies](http://twitter.com/architechies), and is based on a similar plugin by [@olemoritz](http://twitter.com/olemoritz). ([His version](https://github.com/Kapeli/Dash-Plugin-for-Xcode) completely overrides the Quick Help popup.) If you like reading Apple's documentation, you might also like Ole's [iOS app DocSets](https://github.com/omz/DocSets-for-iOS) for reading on your iPad or iPhone, even if you have no internet connection.
 
