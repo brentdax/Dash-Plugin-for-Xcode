@@ -113,10 +113,12 @@
     for(NSDictionary *docset in [self om_dashDocSets]) {
         NSString *platform = [[docset objectForKey:@"platform"] lowercaseString];
         
-        if([platformNames containsObject:platform]) {
-            NSString *keyword = [docset objectForKey:@"keyword"];
-            return keyword.length ? keyword : platform;
-        }        
+        for(NSString * wantedPlatform in platformNames) {
+            if([platform hasPrefix:wantedPlatform]) {
+                NSString *keyword = [docset objectForKey:@"keyword"];
+                return keyword.length ? keyword : platform;
+            }
+        }
     }
 
     return nil;
