@@ -24,7 +24,7 @@
 
 @implementation NSObject (OMSwizzledIDEQuickHelpActionManager)
 
-- (NSString*)om_searchStringForToken:(DSAToken*)token {
+- (NSString*)om_searchStringForNameInToken:(DSAToken*)token {
     if([@[@"instm", @"clm", @"instp"] containsObject:token.type]) {
         return [NSString stringWithFormat:@"%@ %@", token.scope, token.name];
     }
@@ -35,6 +35,25 @@
     }
     else {
         return token.name;
+    }
+}
+
+- (NSString*)om_searchStringForToken:(DSAToken*)token {
+    NSString * nameString = [self om_searchStringForNameInToken:token];
+    NSString * keyword = nil;
+    
+    if([token.distributionName rangeOfString:@"OS X"].location != NSNotFound) {
+        keyword = [self om_OSXKeyword];
+    }
+    else if([token.distributionName rangeOfString:@"iOS"].location != NSNotFound || [token.distributionName rangeOfString:@"iPhone"].location != NSNotFound) {
+        keyword = [self om_iOSKeyword];
+    }
+    
+    if(keyword && ![[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled]) {
+        return [NSString stringWithFormat:@"%@:%@", [keyword stringByReplacingOccurrencesOfString:@":" withString:@""], nameString];
+    }
+    else {
+        return nameString;
     }
 }
 
@@ -75,7 +94,6 @@
         return NO;
     }
     
-    searchString = [self om_appendActiveSchemeKeyword:searchString];
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
 	[pboard setString:searchString forType:NSStringPboardType];
 	return NSPerformService(@"Look Up in Dash", pboard);
@@ -130,42 +148,6 @@
 
 - (NSString*)om_OSXKeyword {
     return [self om_keywordForPlatformNamed:@[ @"macosx", @"osx" ]];
-}
-
-- (NSString *)om_appendActiveSchemeKeyword:(NSString *)searchString
-{
-    if(![[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled])
-    {
-        @try { // I don't trust myself with this swizzling business
-            id windowController = [[NSApp keyWindow] windowController];
-            id workspace = [windowController valueForKey:@"_workspace"];
-            id runContextManager = [workspace valueForKey:@"runContextManager"];
-            id activeDestination = [runContextManager valueForKey:@"_activeRunDestination"];
-            NSString *destination = [activeDestination valueForKey:@"targetIdentifier"];
-            
-            if(destination && [destination isKindOfClass:[NSString class]] && destination.length)
-            {
-                destination = [destination lowercaseString];
-                BOOL iOS = [destination hasPrefix:@"iphone"] || [destination hasPrefix:@"ipad"] || [destination hasPrefix:@"ios"];
-                BOOL mac = [destination hasPrefix:@"mac"] || [destination hasPrefix:@"osx"];
-
-                NSString *foundKeyword;
-                    
-                if(iOS) {
-                    foundKeyword = [self om_iOSKeyword];
-                }
-                else if(mac) {
-                    foundKeyword = [self om_OSXKeyword];
-                }
-                
-                if(foundKeyword) {
-                    searchString = [[[foundKeyword stringByReplacingOccurrencesOfString:@":" withString:@""] stringByAppendingString:@":"] stringByAppendingString:searchString];
-                }
-            }
-        }
-        @catch (NSException *exception) { }
-    }
-    return searchString;
 }
 
 @end
