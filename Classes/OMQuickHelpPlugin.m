@@ -81,6 +81,34 @@
 	return NSPerformService(@"Look Up in Dash", pboard);
 }
 
+- (NSArray *)om_dashDocSets {
+    NSUserDefaults *defaults = [[[NSUserDefaults alloc] init] autorelease];
+    [defaults addSuiteNamed:@"com.kapeli.dash"];
+    [defaults synchronize];
+    
+    NSArray *docsets = [defaults objectForKey:@"docsets"];
+    docsets = [docsets sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        BOOL obj1Enabled = [[obj1 objectForKey:@"isProfileEnabled"] boolValue];
+        BOOL obj2Enabled = [[obj2 objectForKey:@"isProfileEnabled"] boolValue];
+        if(obj1Enabled && !obj2Enabled)
+        {
+            return NSOrderedAscending;
+        }
+        else if(!obj1Enabled && obj2Enabled)
+        {
+            return NSOrderedDescending;
+        }
+        else
+        {
+            return NSOrderedSame;
+        }
+    }];
+    
+    [defaults removeSuiteNamed:@"com.kapeli.dash"];
+    
+    return docsets;
+}
+
 - (NSString *)om_appendActiveSchemeKeyword:(NSString *)searchString
 {
     if(![[NSUserDefaults standardUserDefaults] boolForKey:kOMDashPlatformDetectionDisabled])
@@ -99,26 +127,7 @@
                 BOOL mac = [destination hasPrefix:@"mac"] || [destination hasPrefix:@"osx"];
                 if(iOS || mac)
                 {
-                    NSUserDefaults *defaults = [[[NSUserDefaults alloc] init] autorelease];
-                    [defaults addSuiteNamed:@"com.kapeli.dash"];
-                    [defaults synchronize];
-                    NSArray *docsets = [defaults objectForKey:@"docsets"];
-                    docsets = [docsets sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-                        BOOL obj1Enabled = [[obj1 objectForKey:@"isProfileEnabled"] boolValue];
-                        BOOL obj2Enabled = [[obj2 objectForKey:@"isProfileEnabled"] boolValue];
-                        if(obj1Enabled && !obj2Enabled)
-                        {
-                            return NSOrderedAscending;
-                        }
-                        else if(!obj1Enabled && obj2Enabled)
-                        {
-                            return NSOrderedDescending;
-                        }
-                        else
-                        {
-                            return NSOrderedSame;
-                        }
-                    }];
+                    NSArray * docsets = [self om_dashDocSets];
                     
                     NSString *foundKeyword = nil;
                     for(NSDictionary *docset in docsets)
@@ -144,7 +153,6 @@
                     {
                         searchString = [[[foundKeyword stringByReplacingOccurrencesOfString:@":" withString:@""] stringByAppendingString:@":"] stringByAppendingString:searchString];
                     }
-                    [defaults removeSuiteNamed:@"com.kapeli.dash"];
                 }
             }
         }
