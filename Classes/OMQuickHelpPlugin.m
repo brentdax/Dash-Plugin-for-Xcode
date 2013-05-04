@@ -59,19 +59,27 @@
 
 - (void)om_openNavigableItemInDocumentationOrganizer:(IDENavigableItem *)tokenItem {
     BOOL dashDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:kOMOpenInDashDisabled];
+    
     if(!dashDisabled) {
-        DSAToken * token = tokenItem.representedObject;
-        NSString * searchString = [self om_searchStringForToken:token];
-        
-        if([self om_showDashForSearchString:searchString]) {
-            return;
+        @try {
+            DSAToken * token = tokenItem.representedObject;
+            NSString * searchString = [self om_searchStringForToken:token];
+            
+            if([self om_showDashForSearchString:searchString]) {
+                return;
+            }
+            // If we got here, we couldn't show Dash, but that could be because searchString is nil.
+            else if(searchString) {
+                [self om_dashNotInstalledWarning];
+            }
         }
-        
-        // If we got here, we couldn't show Dash.
-        [self om_dashNotInstalledWarning];
+        @catch (NSException * exception) {
+            NSLog(@"OMQuickHelpPlugin could not extract info from documentation token: %@", exception);
+        }
     }
     
-    // Fall back to documentation browser
+    // There are about three different ways we could have gotten here, but whatever the reason, we couldn't use Dash.
+    // Fall back to the documentation browser instead.
     [self om_openNavigableItemInDocumentationOrganizer:tokenItem];
 }
 
