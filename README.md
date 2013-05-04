@@ -2,20 +2,13 @@
 
 ## Overview
 
-This plugin allows you to use [Dash](http://kapeli.com/dash/) instead of Xcode's own documentation viewer when clicking links in Xcode's Quick Look window.
+This Xcode plugin helps [Dash](http://kapeli.com/dash/) users avoid the Xcode documentation window. When it's installed and enabled, links from the Quick Help documentation popup and inspector open Dash, instead of the documentation browser in the Xcode Organizer. Quick Help otherwise operates normally.
 
-While you could also use Dash's "Look up in Dash" Services menu item, this is better in several ways:
-
-* It's smart about looking up symbols that are split across multiple ranges (e.g. **Option-Clicking** on `foo:` in something like `[self foo:x withBar:y andBaz:z]` searches for `foo:withBar:andBaz:` instead of just `foo:`).
-* It's faster to use with the mouse, and the keyboard shortcut can be set directly in Xcode's preferences.
-* You don't have to select the entire symbol that you want to look up.
-* It automatically detects your active scheme (iOS or Mac) and searches only the active scheme's docset
+Since Xcode understands Objective-C selector syntax and knows which platform's documentation you're interested in, this plugin does too. It does its best to send you to the right place.
 
 If you want to use Xcode's built-in documentation browser again, you can temporarily disable the Dash integration using the "Enable Dash Quick Help" item in the "Edit" menu.
 
-If you like reading Apple's documentation, you might also like my [iOS app DocSets](https://github.com/omz/DocSets-for-iOS) for reading on your iPad or iPhone, even if you have no internet connection.
-
-I'm [@olemoritz](http://twitter.com/olemoritz) on Twitter.
+This plugin has been heavily modified by [@architechies](http://twitter.com/architechies), and is based on a similar plugin by [@olemoritz](http://twitter.com/olemoritz). ([His version](https://github.com/Kapeli/Dash-Plugin-for-Xcode) completely overrides the Quick Help popup.) If you like reading Apple's documentation, you might also like Ole's [iOS app DocSets](https://github.com/omz/DocSets-for-iOS) for reading on your iPad or iPhone, even if you have no internet connection.
 
 ## Usage & Installation
 
@@ -24,7 +17,7 @@ I'm [@olemoritz](http://twitter.com/olemoritz) on Twitter.
 
 ## License
 
-    Copyright (c) 2012, Ole Zorn
+    Copyright (c) 2012-13, Ole Zorn & Brent Royal-Gordon
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
