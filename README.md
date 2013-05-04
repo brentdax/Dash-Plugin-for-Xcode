@@ -1,4 +1,4 @@
-# Dash Plugin for Xcode
+# Dash Plugin for Xcode (modified)
 
 ## Overview
 
